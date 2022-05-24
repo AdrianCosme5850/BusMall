@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 let itemProspects = []
 let totalAnswers = 25
 let currentAnswers = 0
@@ -41,24 +41,26 @@ function randomNumber(){
 let result = Math.floor(Math.random() * 19)
 return result
 }
-
+let prospectsNumberIndex = []
 function renderImages(){
-  let prospectsNumber1 = randomNumber()
-  let prospectsNumber2 = randomNumber()
-  let prospectsNumber3 = randomNumber()
-  while(prospectsNumber1 === prospectsNumber2 || prospectsNumber1 === prospectsNumber3 || prospectsNumber2 === prospectsNumber3){
-    prospectsNumber2 = randomNumber()
-    prospectsNumber3 = randomNumber()
+  for(let i = prospectsNumberIndex.length; i < 6 ; i++){
+    let randoNumber = randomNumber()
+     while(prospectsNumberIndex.includes(randoNumber)){
+      randoNumber = randomNumber()
+    }
+    prospectsNumberIndex.push(randoNumber)
   }
-  image1.src = itemProspects[prospectsNumber1].photo;
-  image1.alt = itemProspects[prospectsNumber1].name;
-  itemProspects[prospectsNumber1].views++;
-  image2.src = itemProspects[prospectsNumber2].photo;
-  image2.alt = itemProspects[prospectsNumber2].name;
-  itemProspects[prospectsNumber2].views++;
-  image3.src = itemProspects[prospectsNumber3].photo;
-  image3.alt = itemProspects[prospectsNumber3].name;
-  itemProspects[prospectsNumber3].views++;
+  console.log(prospectsNumberIndex)
+  image1.src = itemProspects[prospectsNumberIndex[1]].photo;
+  image1.alt = itemProspects[prospectsNumberIndex[1]].name;
+  itemProspects[prospectsNumberIndex[1]].views++;
+  image2.src = itemProspects[prospectsNumberIndex[2]].photo;
+  image2.alt = itemProspects[prospectsNumberIndex[2]].name;
+  itemProspects[prospectsNumberIndex[2]].views++;
+  image3.src = itemProspects[prospectsNumberIndex[3]].photo;
+  image3.alt = itemProspects[prospectsNumberIndex[3]].name;
+  itemProspects[prospectsNumberIndex[3]].views++;
+  prospectsNumberIndex.splice(0,3)
 }
 renderImages()
 
@@ -73,6 +75,9 @@ for(let i = 0; i < itemProspects.length; i++){
   }
   if(currentAnswers === 25){
     imgSection.removeEventListener('click', handleClick)
+    voteViewArray()
+    renderChart()
+    break;
   }
 }
 }
@@ -85,5 +90,72 @@ function handleShowResults(event) {
   }
 }
 }
+let itemNames = []
+let itemVotes = []
+let itemViews = []
+function voteViewArray(){
+  for(let i = 0; i < itemProspects.length; i++){
+    itemNames.push(itemProspects[i].name)
+    itemVotes.push(itemProspects[i].votes)
+    itemViews.push(itemProspects[i].views)
+  }
+}
+
+const ctx = document.getElementById('myChart');
+function renderChart(){const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: itemNames,
+        datasets: [{
+            label: '# of Votes',
+            data: itemVotes,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        },
+        {
+          label: '# of Views',
+          data: itemViews,
+          backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+      }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+})};
 imgSection.addEventListener('click', handleClick)
 resultsDisplay.addEventListener('click', handleShowResults)
